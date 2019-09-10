@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   resources :categories
   resources :vices
   resources :subscriptions
-  resources :users, only: [:show]
+  resources :users
 
   post "/login", to: "auth#create"
   post "/signup", to: "users#create"

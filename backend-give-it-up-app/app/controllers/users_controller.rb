@@ -1,31 +1,24 @@
 class UsersController < ApplicationController
-  def show
-    user = User.find(params[:id])
-    render json: user
-  end
 
   def create
     user = User.create(user_params)
     if user.valid?
-      # Encoding user id to encrypt using JWT
-      payload = { user_id: user.id }
-      token = JWT.encode(payload, 'loveArtsEd', 'HS256')
-
-      render json: { token: token }
+      # Encoding user id to encrypt using JWT (check ApplicationController)
+      render json: { token: encode_token(user) }
     else
       render json: { errors: user.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   def profile
-    # decoding user id to get user
-    token = request.headers["Authorization"]
-    decoded_token = JWT.decode(token, 'loveArtsEd', true, { algorithm: 'HS256' })
-    user_id = decoded_token[0]["user_id"]
+    def decoded_token
+      JWT.decode(token, 'loveArtsEd', true, { algorithm: 'HS256' })
+    end
 
-    user = User.find(user_id)
-
-    render json: user
+    def current_user
+      User.find(decoded_token[0]["user_id"]) if decoded_token
+    end
+    render json: current_user
   end
 
   private
