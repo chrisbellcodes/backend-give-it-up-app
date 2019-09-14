@@ -10,9 +10,9 @@ class CategoriesController < ApplicationController
   end
 
   private
-  
+
   def category_params
-    params.permit()
+    params.permit(:id, :name)
   end
 
 end
